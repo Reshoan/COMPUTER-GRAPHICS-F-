@@ -1,8 +1,7 @@
 # depslib dependency file v1.0
-1756200936 source:c:\users\techno\desktop\cg\flab 2\labtask\main.cpp
+1756197567 source:c:\users\techno\desktop\cg\flab 2\transformation\main.cpp
 	<windows.h>
 	<GL/glut.h>
-	<cmath>
 
 1301111162 c:\program files (x86)\codeblocks\mingw\include\windows.h
 	<winresrc.h>

@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1756200936 source:c:\users\techno\desktop\cg\flab 2\labtask\main.cpp
+1756976002 source:c:\users\techno\desktop\cg\timer\main.cpp
 	<windows.h>
 	<GL/glut.h>
 	<cmath>
