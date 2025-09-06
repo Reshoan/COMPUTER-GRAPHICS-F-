@@ -1,6 +1,11 @@
 #include <windows.h> // for MS Windows
 #include <GL/glut.h> // GLUT, include glu.h and gl.h
-
+#ifdef _WIN32
+#endif
+#include <cmath>
+#include <cstdio>
+#include <iostream>
+#include <sstream>
 // main.cpp
 // Cycle rickshaw (Bangladesh style) in 2D with simple animation.
 // Build in Code::Blocks with GLUT/freeglut.
@@ -12,14 +17,7 @@
 //   R      : reset position
 //   Esc    : quit
 
-#ifdef _WIN32
-#endif
-#include <GL/glut.h>
-#include <cmath>
-#include <cstdio>
-#include <windows.h>
-#include <iostream>
-#include <sstream>
+
 
 using namespace std;
 
@@ -1175,7 +1173,7 @@ void display() {
     glClear(GL_COLOR_BUFFER_BIT);
 
     drawGround();
-    drawRickshaw(rickshawX, rickshawY, 75.0f, wheelAngle);
+    drawRickshaw(rickshawX, rickshawY, 50.0f, wheelAngle);
 
     // HUD text
     glColor3f(0, 0, 0);

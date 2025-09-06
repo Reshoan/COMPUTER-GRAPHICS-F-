@@ -1,11 +1,9 @@
 # depslib dependency file v1.0
-1757167234 source:c:\users\resho\desktop\computer-graphics-f-\rickshaw\rickshaw\main.cpp
+1757170592 source:c:\users\resho\desktop\computer-graphics-f-\rickshaw\rickshaw\main.cpp
 	<windows.h>
-	<GL/glut.h>
 	<GL/glut.h>
 	<cmath>
 	<cstdio>
-	<windows.h>
 	<iostream>
 	<sstream>
 
