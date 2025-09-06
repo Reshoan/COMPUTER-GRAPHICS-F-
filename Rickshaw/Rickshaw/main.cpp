@@ -22,18 +22,26 @@
 using namespace std;
 
 // ---- World settings ----
-static float worldHalfW = 400.0f;   // world half-width in units
-static float worldHalfH = 300.0f;   // world half-height in units
+static float worldHalfW = 640.0f;   // width half
+static float worldHalfH = 360.0f;   // height half
 static float chainOffset = 0.0f; // normalized [0,1) along the chain path
 
 struct Vec2 { float x, y; };
 
 static float wR = 1.125f;
+static float laneY[3] = { 120.0f, -60.0f, -240.0f };
+static int currentLane = 0;     // start in middle lane
+
+static float rickshawY = laneY[currentLane];
+static float targetY   = laneY[currentLane];
+
+
+
 
 
 // ---- Animation state ----
 static float rickshawX = -250.0f;   // rickshaw position (center)
-static float rickshawY = -80.0f;    // ground level baseline for wheels
+
 static float speed = 80.0f;         // units per second
 static bool  paused = false;
 static float wheelAngle = 0.0f;     // degrees
@@ -1140,40 +1148,75 @@ void drawRickshaw(float x, float y, float scale, float wheelSpinDeg) {
 
 // --------- Scene ----------
 void drawGround() {
-    // Sky
+    // Sky (top quarter = 180 units)
     glColor3f(0.82f, 0.93f, 0.99f);
     glBegin(GL_QUADS);
-    glVertex2f(-worldHalfW, 0);
-    glVertex2f( worldHalfW, 0);
-    glVertex2f( worldHalfW, worldHalfH);
+    glVertex2f(-worldHalfW, 180);
+    glVertex2f(worldHalfW, 180);
+    glVertex2f(worldHalfW, worldHalfH);   // +360
     glVertex2f(-worldHalfW, worldHalfH);
     glEnd();
 
-    // Road
+    // Road (bottom 3/4 = 540 units)
     glColor3f(0.92f, 0.92f, 0.92f);
     glBegin(GL_QUADS);
-    glVertex2f(-worldHalfW, -40);
-    glVertex2f( worldHalfW, -40);
-    glVertex2f( worldHalfW, -140);
-    glVertex2f(-worldHalfW, -140);
+    glVertex2f(-worldHalfW, -worldHalfH); // -360
+    glVertex2f(worldHalfW, -worldHalfH);
+    glVertex2f(worldHalfW, 180);
+    glVertex2f(-worldHalfW, 180);
     glEnd();
 
-    // Divider dashes
-    glLineWidth(6.0f);
-    glColor3f(0.85f, 0.85f, 0.85f);
+
+
+    // --- Lane dividers ---
+    glLineWidth(3.0f);
+    glColor3f(0.7f, 0.7f, 0.7f);
+
+    // Top divider
+    // between top & middle
     glBegin(GL_LINES);
-    for (float x = -worldHalfW; x < worldHalfW; x += 60.0f) {
-        glVertex2f(x + 10.0f, -90.0f);
-        glVertex2f(x + 40.0f, -90.0f);
-    }
+    glVertex2f(-worldHalfW, 30);
+    glVertex2f(worldHalfW, 30);
     glEnd();
+
+    // between middle & bottom
+    glBegin(GL_LINES);
+    glVertex2f(-worldHalfW, -150);
+    glVertex2f(worldHalfW, -150);
+    glEnd();
+
+
+
+    // --- Lane speed text ---
+    glColor3f(0, 0, 0);          // black text
+    void *font = GLUT_BITMAP_HELVETICA_18;
+
+    // Top lane (furthest)
+    glRasterPos2f(-600, laneY[0] - 10);   // slightly below center
+    const char *lane1 = "Speed Limit: 40 km/h";
+    for (const char* p = lane1; *p; ++p) glutBitmapCharacter(font, *p);
+
+    // Middle lane
+    glRasterPos2f(-600, laneY[1] - 10);
+    const char *lane2 = "Speed Limit: 40 km/h";
+    for (const char* p = lane2; *p; ++p) glutBitmapCharacter(font, *p);
+
+    // Bottom lane (closest)
+    glRasterPos2f(-600, laneY[2] - 10);
+    const char *lane3 = "Speed Limit: 50 km/h";
+    for (const char* p = lane3; *p; ++p) glutBitmapCharacter(font, *p);
+
+
 }
+
 
 void display() {
     glClear(GL_COLOR_BUFFER_BIT);
 
     drawGround();
     drawRickshaw(rickshawX, rickshawY, 50.0f, wheelAngle);
+
+
 
     // HUD text
     glColor3f(0, 0, 0);
@@ -1230,6 +1273,15 @@ void timer(int value) {
         chainOffset += (omega * dt) / 360.0f; // normalized fraction along chain
         chainOffset = fmod(chainOffset, 1.0f);
     }
+    // Smooth lane switching
+    float laneSpeed = 200.0f; // units per second (adjust smoothness)
+    if (fabs(rickshawY - targetY) > 1.0f) {
+        if (rickshawY < targetY) rickshawY += laneSpeed * dt;
+        else if (rickshawY > targetY) rickshawY -= laneSpeed * dt;
+    } else {
+        rickshawY = targetY; // snap if close enough
+    }
+
 
     glutPostRedisplay();
     glutTimerFunc(16, timer, 0); // ~60 FPS
@@ -1241,14 +1293,33 @@ void keyboard(unsigned char key, int, int) {
         case 27: exit(0); break; // Esc
         case ' ': paused = !paused; break;
         case 'r': case 'R':
-            rickshawX = -250.0f; wheelAngle = 0.0f; speed = 80.0f; paused = false; break;
+            rickshawX = -250.0f; wheelAngle = 0.0f; speed = 80.0f; paused = false;
+            currentLane = 1; rickshawY = laneY[currentLane];
+            break;
+
         case 'a': case 'A': rickshawX -= 10.0f; break;
         case 'd': case 'D': rickshawX += 10.0f; break;
         case 'w': case 'W': speed = clamp(speed + 20.0f, 0.0f, 400.0f); break;
         case 's': case 'S': speed = clamp(speed - 20.0f, 0.0f, 400.0f); break;
-        default: break;
+
+        // --- New controls for lane switching ---
+            case 'q': case 'Q': // move UP a lane
+        if (currentLane > 0) {
+            currentLane--;
+            targetY = laneY[currentLane];
+        }
+        break;
+
+    case 'e': case 'E': // move DOWN a lane
+        if (currentLane < 2) {
+            currentLane++;
+            targetY = laneY[currentLane];
+        }
+        break;
+
     }
 }
+
 
 void initGL() {
     glClearColor(0.96f, 0.98f, 1.0f, 1.0f); // light background
@@ -1259,9 +1330,10 @@ void initGL() {
 }
 
 int main(int argc, char** argv) {
+    rickshawY = laneY[currentLane];
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-    glutInitWindowSize(1000, 600);
+    glutInitWindowSize(1280, 720);
     glutCreateWindow("Bangladesh Manual Rickshaw - OpenGL (GLUT)");
 
     initGL();
