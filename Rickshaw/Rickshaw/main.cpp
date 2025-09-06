@@ -74,36 +74,55 @@ void geoPoint(const string &geoStr) {
         cerr << "Error: Invalid format -> " << geoStr << endl;
     }
 }
-void drawWheel(float x, float y, float r, int spokes, float angleDeg) {
-    // Tire
-    glLineWidth(3.0f);
-    glColor3f(0.05f, 0.05f, 0.05f);
-    drawCircle(x, y, r, 64, false);
+void drawWheel(float x, float y, float r, int spokes, float angleDeg,
+               bool fillTire, float tireR, float tireG, float tireB) {
+    // ----- Tire -----
+    glColor3f(tireR, tireG, tireB);
 
-    // Rim
+    if (fillTire) {
+        // Filled donut from outer radius r to inner radius (0.85r)
+        glBegin(GL_TRIANGLE_STRIP);
+        int segments = 64;
+        for (int i = 0; i <= segments; ++i) {
+            float a = 2.0f * 3.1415926535f * i / segments;
+            float cx = cos(a), cy = sin(a);
+
+            glVertex2f(x + cx * r,        y + cy * r);        // outer edge
+            glVertex2f(x + cx * (r*0.85), y + cy * (r*0.85)); // inner edge
+        }
+        glEnd();
+    } else {
+        // Just outline tire
+        glLineWidth(3.0f);
+        drawCircle(x, y, r, 64, false);
+    }
+
+    // ----- Rim -----
     glLineWidth(1.5f);
     glColor3f(0.25f, 0.25f, 0.25f);
     drawCircle(x, y, r * 0.85f, 64, false);
 
-    // Hub
+    // ----- Hub -----
     glColor3f(0.6f, 0.6f, 0.6f);
     drawCircle(x, y, r * 0.07f, 24, true);
 
-    // Spokes
+    // ----- Spokes -----
     glColor3f(0.75f, 0.75f, 0.75f);
     glBegin(GL_LINES);
     float step = 360.0f / spokes;
     for (int i = 0; i < spokes; ++i) {
         float a = (angleDeg + i * step) * 3.1415926535f / 180.0f;
-        float sx = x + std::cos(a) * (r * 0.07f);
-        float sy = y + std::sin(a) * (r * 0.07f);
-        float ex = x + std::cos(a) * (r * 0.85f);
-        float ey = y + std::sin(a) * (r * 0.85f);
+        float sx = x + cos(a) * (r * 0.07f);
+        float sy = y + sin(a) * (r * 0.07f);
+        float ex = x + cos(a) * (r * 0.85f);
+        float ey = y + sin(a) * (r * 0.85f);
         glVertex2f(sx, sy);
         glVertex2f(ex, ey);
     }
     glEnd();
 }
+
+
 
 
 // ---------- Rickshaw ----------
@@ -642,8 +661,16 @@ void drawRickshaw(float x, float y, float scale, float wheelSpinDeg) {
     float rwR = 1.25f;
     float fwR = 1.25f;
 
-    drawWheel(-2.75192, 0.20551, rwR, 14, wheelSpinDeg);   // left rear
-    drawWheel(3.54232, 0.04381, rwR, 14, wheelSpinDeg);   // right rear
+    drawWheel(-2.75192, 0.20551, rwR, 14, wheelSpinDeg, true, 0.0f, 0.0f, 0.0f);   // left rear
+    drawWheel(3.54232, 0.04381, rwR, 14, wheelSpinDeg, true, 0.0f, 0.0f, 0.0f);   // right rear
+
+    float gR =  0.31918254953747;
+
+    drawWheel(1.1454,  -0.09165, gR, 4, wheelSpinDeg, true, 0.5f, 0.5f, 0.5f);
+
+
+
+
     glPopMatrix();
 }
 
