@@ -26,6 +26,12 @@ using namespace std;
 // ---- World settings ----
 static float worldHalfW = 400.0f;   // world half-width in units
 static float worldHalfH = 300.0f;   // world half-height in units
+static float chainOffset = 0.0f; // normalized [0,1) along the chain path
+
+struct Vec2 { float x, y; };
+
+static float wR = 1.125f;
+
 
 // ---- Animation state ----
 static float rickshawX = -250.0f;   // rickshaw position (center)
@@ -49,6 +55,25 @@ void drawCircle(float cx, float cy, float r, int segments = 48, bool filled = tr
     }
     glEnd();
 }
+// Draws a semicircular or partial mudguard with thickness and color
+void drawMudguard(float cx, float cy, float innerR, float outerR,
+                  float startDeg, float endDeg,
+                  float rColor, float gColor, float bColor,
+                  int segments = 48) {
+    float startRad = startDeg * 3.1415926535f / 180.0f;
+    float endRad   = endDeg   * 3.1415926535f / 180.0f;
+    float step = (endRad - startRad) / segments;
+
+    glColor3f(rColor, gColor, bColor);
+    glBegin(GL_TRIANGLE_STRIP);
+    for (int i = 0; i <= segments; ++i) {
+        float a = startRad + i * step;
+        glVertex2f(cx + outerR * cos(a), cy + outerR * sin(a)); // outer edge
+        glVertex2f(cx + innerR * cos(a), cy + innerR * sin(a)); // inner edge
+    }
+    glEnd();
+}
+
 void geoPoint(const string &geoStr) {
     float x, y;
 
@@ -74,6 +99,253 @@ void geoPoint(const string &geoStr) {
         cerr << "Error: Invalid format -> " << geoStr << endl;
     }
 }
+void drawPedalSystem(float pivotX, float pivotY, float crankLength, float crankAngleDeg) {
+    // ===== PEDAL END POSITION =====
+    float rad = crankAngleDeg * 3.1415926535f / 180.0f;
+    float pedalX = pivotX + cos(rad) * crankLength;
+    float pedalY = pivotY + sin(rad) * crankLength;
+
+    // ---- Crank ----
+    glLineWidth(4.0f);
+    glColor3f(0.5f, 0.5f, 0.5f);
+    glBegin(GL_LINES);
+        glVertex2f(pivotX, pivotY);
+        glVertex2f(pedalX, pedalY);
+    glEnd();
+
+    // ---- Pedal ----
+    float pedalW = 0.6f, pedalH = 0.08f;
+    glColor3f(0.0f, 0.0f, 0.0f);
+    glBegin(GL_QUADS);
+        glVertex2f(pedalX - pedalW/2, pedalY - pedalH/2);
+        glVertex2f(pedalX + pedalW/2, pedalY - pedalH/2);
+        glVertex2f(pedalX + pedalW/2, pedalY + pedalH/2);
+        glVertex2f(pedalX - pedalW/2, pedalY + pedalH/2);
+    glEnd();
+
+    // ===== LEG SYSTEM =====
+    float hipX = 0.24682f, hipY = 2.18015f;  // fixed hip
+    float thighLen = 1.4f, legLen = 1.1f;
+
+    float ankleX = pedalX, ankleY = pedalY;
+
+    // --- IK solve for knee ---
+    float dx = ankleX - hipX;
+    float dy = ankleY - hipY;
+    float dist = sqrt(dx*dx + dy*dy);
+
+    if (dist > thighLen + legLen) dist = thighLen + legLen;
+    if (dist < fabs(thighLen - legLen)) dist = fabs(thighLen - legLen);
+
+    float a = acosf((thighLen*thighLen + dist*dist - legLen*legLen) / (2*thighLen*dist));
+    float b = atan2f(dy, dx);
+
+    // Flip so knee bends correctly
+    float kneeX = hipX + thighLen * cos(b + a);
+    float kneeY = hipY + thighLen * sin(b + a);
+
+
+    // =========================
+    // DRAW LEG (anchored knee → ankle)
+    // =========================
+    struct Vec2 { float x, y; };
+    Vec2 legPoints[6] = {
+        {1.28789f,-0.22081f}, // foot-ankle
+        {1.37f,-0.22f},       // ankle pivot
+        {1.44331f,-0.21294f},
+        {1.21248f,0.92661f},
+        {1.08f,0.88f},        // knee pivot
+        {0.94934f,0.83308f}
+    };
+    Vec2 kneePivot = legPoints[4];       // P
+    Vec2 anklePivotOrig = legPoints[1];  // R
+
+    float legOrigDist = sqrt((anklePivotOrig.x - kneePivot.x)*(anklePivotOrig.x - kneePivot.x) +
+                             (anklePivotOrig.y - kneePivot.y)*(anklePivotOrig.y - kneePivot.y));
+    float legCurrDist = sqrt((ankleX - kneeX)*(ankleX - kneeX) + (ankleY - kneeY)*(ankleY - kneeY));
+    float legAngle = atan2f(ankleY - kneeY, ankleX - kneeX); // direction from knee → ankle
+    float origAngle = atan2f(anklePivotOrig.y - kneePivot.y, anklePivotOrig.x - kneePivot.x);
+
+    glBegin(GL_POLYGON);
+    glColor3f(0.8f, 0.5f, 0.2f);
+    for (int i = 0; i < 6; i++) {
+        Vec2 v = legPoints[i];
+        if (i == 4) glVertex2f(kneeX, kneeY);       // knee moves
+        else if (i == 1) glVertex2f(ankleX, ankleY); // ankle moves
+        else {
+            float relX = v.x - kneePivot.x;
+            float relY = v.y - kneePivot.y;
+
+            // rotate polygon according to angle change
+            float newX = cos(legAngle - origAngle) * relX - sin(legAngle - origAngle) * relY;
+            float newY = sin(legAngle - origAngle) * relX + cos(legAngle - origAngle) * relY;
+
+            // scale to match current knee→ankle distance
+            newX *= legCurrDist / legOrigDist;
+            newY *= legCurrDist / legOrigDist;
+
+            // translate to current knee
+            newX += kneeX;
+            newY += kneeY;
+
+            glVertex2f(newX, newY);
+        }
+    }
+    glEnd();
+    // =========================
+    // DRAW FOOT (exact polygon)
+    // =========================
+    glPushMatrix();
+
+    // Compute offset from polygon's ankle pivot R to pedal
+    float R_x = 1.37f, R_y = -0.22f; // ankle pivot in polygon coordinates
+    float ankleOffsetY = 0.215f;      // shift up a bit
+    float ankleOffsetX = -0.05f;
+    float offsetX = pedalX - R_x + ankleOffsetX;
+    float offsetY = pedalY - R_y + ankleOffsetY;
+
+    // Translate entire foot polygon so that R aligns slightly above pedal
+    glTranslatef(offsetX, offsetY, 0.0f);
+
+    glBegin(GL_POLYGON);
+        glColor3f(0.8f, 0.5f, 0.2f);
+        geoPoint("H=$point(1.27312,-0.3271)");
+        geoPoint("G=$point(1.30709,-0.40183)");
+        geoPoint("C=$point(1.4,-0.4)");
+        geoPoint("D=$point(1.8,-0.4)");
+        geoPoint("E=$point(1.77924,-0.29993)");
+        geoPoint("F=$point(1.44331,-0.21294)");
+        geoPoint("R=$point(1.37, -0.22)"); // ankle pivot
+        geoPoint("(1.28789, -0.22081)");
+    glEnd();
+    //sandles
+    glBegin(GL_QUADS);
+        glColor3f(0.5f, 0.0f, 0.0f);
+        geoPoint("G=$point(1.2, -0.5)");
+        geoPoint("D=$point(1.77437, -0.50079)");
+        geoPoint("V_{3}=$point(1.79,-0.33)");;
+        geoPoint("H=$point(1.17904, -0.33743)");
+    glEnd();
+    glBegin(GL_QUADS);
+        glColor3f(0.5f, 0.0f, 0.0f);
+        geoPoint("W_{3}=$point(1.49, -0.35)");
+        geoPoint("B_{4}=$point(1.64, -0.35)");
+        geoPoint("A_{4}=$point(1.67, -0.27)");
+        geoPoint("B_{4}=$point(1.55, -0.24)");
+    glEnd();
+
+
+    glPopMatrix();
+
+    // =========================
+    // DRAW THIGH (anchored hip → knee)
+    // =========================
+    Vec2 thighPoints[6] = {
+        {0.94934f,0.83308f}, // K
+        {1.08f,0.88f},       // P
+        {1.21248f,0.92661f}, // J
+        {0.72997f,2.29486f}, // M
+        {0.24682f,2.18015f}, // N hip pivot
+        {-0.23687f,2.04651f} // L
+    };
+    Vec2 hipPivot = thighPoints[4];  // N
+    Vec2 kneePivotOrig = thighPoints[1]; // P
+
+    float thighOrigDist = sqrt((kneePivotOrig.x - hipPivot.x)*(kneePivotOrig.x - hipPivot.x) +
+                               (kneePivotOrig.y - hipPivot.y)*(kneePivotOrig.y - hipPivot.y));
+    float thighCurrDist = sqrt((kneeX - hipX)*(kneeX - hipX) + (kneeY - hipY)*(kneeY - hipY));
+    float thighAngle = atan2f(kneeY - hipY, kneeX - hipX);
+    float thighOrigAngle = atan2f(kneePivotOrig.y - hipPivot.y, kneePivotOrig.x - hipPivot.x);
+
+    glBegin(GL_POLYGON);
+    glColor3f(0.8f, 0.5f, 0.2f);
+    for (int i = 0; i < 6; i++) {
+        Vec2 v = thighPoints[i];
+        if (i == 4) glVertex2f(hipX, hipY);      // hip fixed
+        else if (i == 1) glVertex2f(kneeX, kneeY); // knee moves
+        else {
+            float relX = v.x - hipPivot.x;
+            float relY = v.y - hipPivot.y;
+
+            float newX = cos(thighAngle - thighOrigAngle) * relX - sin(thighAngle - thighOrigAngle) * relY;
+            float newY = sin(thighAngle - thighOrigAngle) * relX + cos(thighAngle - thighOrigAngle) * relY;
+
+            // scale to match current hip→knee distance
+            newX *= thighCurrDist / thighOrigDist;
+            newY *= thighCurrDist / thighOrigDist;
+
+            // translate to hip
+            newX += hipX;
+            newY += hipY;
+
+            glVertex2f(newX, newY);
+        }
+    }
+    glEnd();
+
+    // =========================
+    // DEBUG CIRCLES (remove later)
+    // =========================
+    glColor3f(0.8f, 0.5f, 0.2f);
+    drawCircle(hipX, hipY, 0.05f, 16, true);   // Hip
+    drawCircle(kneeX, kneeY, 0.15f, 16, true); // Knee
+    glColor3f(0.5f, 0.0f, 0.0f);
+    drawCircle(ankleX, ankleY, 0.05f, 16, true); // Ankle
+}
+
+void drawChainDotsContinuous(float rearX, float rearY, float rearR,
+                             float gearX, float gearY, float gearR,
+                             int numDots)
+{
+    glPointSize(4.0f);
+    glColor3f(0.2f, 0.2f, 0.2f);
+    glBegin(GL_POINTS);
+
+    float rearArcLen    = 3.14159265f * rearR; // top half
+    float gearArcLen    = 3.14159265f * gearR; // top half
+    float topLineLen    = sqrt((gearX - gearR - (rearX + rearR))*(gearX - gearR - (rearX + rearR)) +
+                               (gearY + gearR - rearY)*(gearY + gearR - rearY));
+    float bottomLineLen = sqrt((gearX + gearR - (rearX - rearR))*(gearX + gearR - (rearX - rearR)) +
+                               (gearY - gearR - rearY)*(gearY - rearR - rearY));
+
+    float totalLen = rearArcLen + topLineLen + gearArcLen + bottomLineLen;
+
+    for (int i = 0; i < numDots; ++i) {
+        float t = fmod((i / (float)numDots) + chainOffset, 1.0f); // use chainOffset from timer
+        float dist = t * totalLen;
+        float x, y;
+
+        if (dist < rearArcLen) {
+            float angle = 3.14159265f/15.0f - (dist / rearArcLen) * 3.14159265f;
+            x = rearX + cos(angle) * rearR;
+            y = rearY + sin(angle) * rearR;
+        }
+        else if (dist < rearArcLen + topLineLen) {
+            float lineT = (dist - rearArcLen) / topLineLen;
+            x = rearX + rearR + (gearX - gearR - (rearX + rearR)) * lineT;
+            y = rearY + (gearY + gearR - rearY) * lineT;
+        }
+        else if (dist < rearArcLen + topLineLen + gearArcLen) {
+            float angle = 3.14159265f/2.0f - ((dist - rearArcLen - topLineLen) / gearArcLen) * 3.14159265f;
+            x = gearX + cos(angle) * gearR;
+            y = gearY + sin(angle) * gearR;
+        }
+        else {
+            float lineT = (dist - rearArcLen - topLineLen - gearArcLen) / bottomLineLen;
+            x = gearX - gearR + ((rearX - rearR) - (gearX - gearR)) * lineT;
+            y = gearY - gearR + ((rearY - rearR) - (gearY - gearR)) * lineT;
+        }
+
+        glVertex2f(x, y);
+    }
+
+    glEnd();
+}
+
+
+
+
+
 void drawWheel(float x, float y, float r, int spokes, float angleDeg,
                bool fillTire, float tireR, float tireG, float tireB) {
     // ----- Tire -----
@@ -104,7 +376,7 @@ void drawWheel(float x, float y, float r, int spokes, float angleDeg,
 
     // ----- Hub -----
     glColor3f(0.6f, 0.6f, 0.6f);
-    drawCircle(x, y, r * 0.07f, 24, true);
+    drawCircle(x, y, r * 0.2f, 24, true);
 
     // ----- Spokes -----
     glColor3f(0.75f, 0.75f, 0.75f);
@@ -131,52 +403,14 @@ void drawRickshaw(float x, float y, float scale, float wheelSpinDeg) {
     glTranslatef(x, y, 0.0f);
     glScalef(scale, scale, 1.0f);
 
-    //HOOD-1
-    glBegin(GL_TRIANGLE_FAN);
-        glColor3f(1.0f, 0.5f, 0.0f);
-        geoPoint("C=$point(-3.07781,1.4511)");
-        geoPoint("D=$point(-2.87873,1.49092)");
-        geoPoint("E=$point(-2.89465,2.53413)");
-        geoPoint("F=$point(-3.00614,4.31795)");
-        geoPoint("G=$point(-3.49191,4.07904)");
-        geoPoint("H=$point(-4.08121,3.9357)");
-        geoPoint("I=$point(-3.46006,2.70933)");
-    glEnd();
-    //HOOD-2
-    glBegin(GL_TRIANGLE_FAN);
-        glColor3f(1.0f, 0.5f, 0.0f);
-        geoPoint("E=$point(-2.89465,2.53413)");
-        geoPoint("J=$point(-2.6876,2.73322)");
-        geoPoint("K=$point(-2.44521,2.74716)");
-        geoPoint("F=$point(-3.00614,4.31795)");
-    glEnd();
-    //HOOD-3
-    glBegin(GL_TRIANGLE_FAN);
-        glColor3f(1.0f, 0.5f, 0.0f);
-        geoPoint("K=$point(-2.44521,2.74716)");
-        geoPoint("L=$point(-2.09831,2.89249)");
-        geoPoint("M=$point(-1.8337,2.83747)");
-        geoPoint("N=$point(-1.69217,3.66494)");
-        geoPoint("O=$point(-1.80366,4.50907)");
-        geoPoint("P=$point(-2.38499,4.35776)");
-        geoPoint("F=$point(-3.00614,4.31795)");
-    glEnd();
 
-    //HOOD-4
+    drawWheel(3.54232, 0.04381, wR, 14, wheelSpinDeg, true, 0.0f, 0.0f, 0.0f);   // right rear
 
-    glBegin(GL_TRIANGLE_FAN);
-        glColor3f(1.0f, 0.5f, 0.0f);
-        geoPoint("M=$point(-1.8337,2.83747)");
-        geoPoint("Q=$point(-1.38475,2.68266)");
-        geoPoint("R=$point(-1.07102,3.03583)");
-        geoPoint("S=$point(-0.81619,3.47382)");
-        geoPoint("T=$point(-0.6171,4.09497)");
-        geoPoint("U=$point(-0.60118,4.23831)");
-        geoPoint("V=$point(-0.97546,4.2622)");
-        geoPoint("W=$point(-1.46123,4.37369)");
-        geoPoint("O=$point(-1.80366,4.50907)");
-        geoPoint("N=$point(-1.69217,3.66494)");
-    glEnd();
+    // Front wheel mudguard, shorter length
+    drawMudguard(3.54232, 0.04381, wR, wR + 0.15f, 180.0f, 90.0f, 0.25f, 0.41f, 0.88f, 32);
+
+    //back
+    drawPedalSystem(1.1454,  -0.09165, 0.5f, wheelAngle + 180.0f);
 
     //BAR-1
     glBegin(GL_QUADS);
@@ -229,6 +463,80 @@ void drawRickshaw(float x, float y, float scale, float wheelSpinDeg) {
         geoPoint("G_{1}=$point(-2.82908,2.649)");
         geoPoint("E=$point(-2.89465,2.53413)");
     glEnd();
+    //BAR-Joint
+    glBegin(GL_QUADS);
+        glColor3f(0.5f, 0.5f, 0.5f);
+        geoPoint("Z=$point(-1.95497,1.60414)");
+        geoPoint("A_{1}=$point(-1.84661,1.5964)");
+        geoPoint("F_{1}=$point(-1.83112,1.85958)");
+        geoPoint("E_{1}=$point(-1.92917,1.74347)");
+    glEnd();
+    //HOOD-1
+    glBegin(GL_TRIANGLE_FAN);
+        glColor3f(1.0f, 0.5f, 0.0f);
+        geoPoint("C=$point(-3.07781,1.4511)");
+        geoPoint("D=$point(-2.87873,1.49092)");
+        geoPoint("E=$point(-2.89465,2.53413)");
+        geoPoint("F=$point(-3.00614,4.31795)");
+        geoPoint("G=$point(-3.49191,4.07904)");
+        geoPoint("H=$point(-4.08121,3.9357)");
+        geoPoint("I=$point(-3.46006,2.70933)");
+    glEnd();
+    //HOOD-2
+    glBegin(GL_TRIANGLE_FAN);
+        glColor3f(1.0f, 0.5f, 0.0f);
+        geoPoint("E=$point(-2.89465,2.53413)");
+        geoPoint("J=$point(-2.6876,2.73322)");
+        geoPoint("K=$point(-2.44521,2.74716)");
+        geoPoint("F=$point(-3.00614,4.31795)");
+    glEnd();
+    //HOOD-3
+    glBegin(GL_TRIANGLE_FAN);
+        glColor3f(1.0f, 0.5f, 0.0f);
+        geoPoint("K=$point(-2.44521,2.74716)");
+        geoPoint("L=$point(-2.09831,2.89249)");
+        geoPoint("M=$point(-1.8337,2.83747)");
+        geoPoint("N=$point(-1.69217,3.66494)");
+        geoPoint("O=$point(-1.80366,4.50907)");
+        geoPoint("P=$point(-2.38499,4.35776)");
+        geoPoint("F=$point(-3.00614,4.31795)");
+    glEnd();
+
+    //HOOD-4
+
+    glBegin(GL_TRIANGLE_FAN);
+        glColor3f(1.0f, 0.5f, 0.0f);
+        geoPoint("M=$point(-1.8337,2.83747)");
+        geoPoint("Q=$point(-1.38475,2.68266)");
+        geoPoint("R=$point(-1.07102,3.03583)");
+        geoPoint("S=$point(-0.81619,3.47382)");
+        geoPoint("T=$point(-0.6171,4.09497)");
+        geoPoint("U=$point(-0.60118,4.23831)");
+        geoPoint("V=$point(-0.97546,4.2622)");
+        geoPoint("W=$point(-1.46123,4.37369)");
+        geoPoint("O=$point(-1.80366,4.50907)");
+        geoPoint("N=$point(-1.69217,3.66494)");
+    glEnd();
+    //hood line
+    glBegin(GL_LINE_STRIP);
+        glColor3f(0.8f, 0.4f, 0.0f); // dark orange
+        geoPoint("T_{1}=$point(-2.99822,4.32949)");
+        geoPoint("U_{1}=$point(-2.68525,3.78553)");
+        geoPoint("V_{1}=$point(-2.58093,3.49492)");
+        geoPoint("W_{1}=$point(-2.43189,3.04037)");
+        geoPoint("Z_{1}=$point(-2.40954,2.73485)");
+    glEnd();
+    glBegin(GL_LINE_STRIP);
+        glColor3f(0.8f, 0.4f, 0.0f); // dark orange
+        geoPoint("A_{2}=$point(-1.80596,4.49343)");
+        geoPoint("B_{2}=$point(-1.7389,4.26243)");
+        geoPoint("C_{2}=$point(-1.70164,3.94946)");
+        geoPoint("D_{2}=$point(-1.68674,3.65885)");
+        geoPoint("E_{2}=$point(-1.70164,3.4204)");
+        geoPoint("Q_{2}=$point(-1.7538,3.09998)");
+        geoPoint("R_{2}=$point(-1.79106,2.84663)");
+    glEnd();
+
 
     //support bar 1_1
     glBegin(GL_QUADS);
@@ -658,15 +966,173 @@ void drawRickshaw(float x, float y, float scale, float wheelSpinDeg) {
         geoPoint("Q_{7}=$point(0.32744,1.57317)");
     glEnd();
 
-    float rwR = 1.25f;
-    float fwR = 1.25f;
+    drawChainDotsContinuous(-2.71359, 0.31228, 0.2f, // rear wheel
+                        1.1454, -0.09165, 0.2f,   // gear
+                        75);                        // number of dots
 
-    drawWheel(-2.75192, 0.20551, rwR, 14, wheelSpinDeg, true, 0.0f, 0.0f, 0.0f);   // left rear
-    drawWheel(3.54232, 0.04381, rwR, 14, wheelSpinDeg, true, 0.0f, 0.0f, 0.0f);   // right rear
+
+
+
+    drawWheel(-2.75192, 0.20551, wR, 14, wheelSpinDeg, true, 0.0f, 0.0f, 0.0f);   // left rear
+
+    //mudguard
+    // Rear wheel mudguard
+    drawMudguard(-2.75192, 0.20551, wR, wR + 0.2f, 180.0f, 0.0f, 0.25f, 0.41f, 0.88f, 32);
+
 
     float gR =  0.31918254953747;
 
-    drawWheel(1.1454,  -0.09165, gR, 4, wheelSpinDeg, true, 0.5f, 0.5f, 0.5f);
+    drawWheel(1.1454,  -0.09165, gR, 4, wheelSpinDeg, true, 0.5f, 0.5f, 0.5f);//gear
+
+    // crankshaft
+    drawPedalSystem(1.1454,  -0.09165, 0.5f, wheelAngle);
+    //torso
+    glBegin(GL_POLYGON);
+        glColor3f(1.0f, 1.0f,  1.0f);
+        geoPoint("N_{3}=$point(-0.27765,1.91279) ");
+        geoPoint("O_{3}=$point(1.09559, 2.08182)");
+        geoPoint("F_{1}=$point(1.24291,2.89574)");
+        geoPoint("E_{1}=$point(1.36615,3.19008)");
+        geoPoint("D_{1}=$point(1.37827,3.29908)");
+        geoPoint("C_{1}=$point(1.37221,3.42019)");
+        geoPoint("B_{1}=$point(1.29955,3.60791)");
+        geoPoint("A_{1}=$point(1.13605,3.63213)");
+        geoPoint("Z=$point(0.93017,3.58368)");
+        geoPoint("W=$point(0.36701,3.19008)");
+        geoPoint("V=$point(-0.15375,2.72987)");
+        geoPoint("U=$point(-0.29908,2.36655)");
+    glEnd();
+
+    //tank cut  out
+    glBegin(GL_POLYGON);
+        glColor3f(0.8f, 0.5f, 0.2f);
+        geoPoint("E_{3}=$point(0.7,3.3)");
+        geoPoint("F_{3}=$point(0.70962,3.14531)");
+        geoPoint("G_{3}=$point(0.82884,3.01662)");
+        geoPoint("H_{3}=$point(0.88183,2.99013)");
+        geoPoint("I_{3}=$point(1,3)");
+        geoPoint("J_{3}=$point(1.0673,3.01473)");
+        geoPoint("K_{3}=$point(1.32278,3.27021)");
+        geoPoint("L_{3}=$point(1.32278,3.3989)");
+        geoPoint("M_{3}=$point(1.30764,3.44054)");
+        geoPoint("A_{3}=$point(1.22742,3.52724)");
+        geoPoint("B_{3}=$point(1.07521,3.55035)");
+        geoPoint("C_{3}=$point(0.96784,3.52724)");
+        geoPoint("D_{3}=$point(0.80203,3.43483)");
+    glEnd();
+
+    //arm_1
+    glBegin(GL_QUADS);
+        glColor3f(0.8f, 0.5f, 0.2f);
+        geoPoint("O_{2}=$point(0.81454,3.28539)");
+        geoPoint("M_{2}=$point(1.36791,2.56503)");
+        geoPoint("N_{2}=$point(1.44976,2.76149)");
+        geoPoint("P_{2}=$point(1.24021,3.43601)");
+    glEnd();
+    //arm_2
+    glBegin(GL_QUADS);
+        glColor3f(0.8f, 0.5f, 0.2f);
+        geoPoint("M_{2}=$point(1.36791,2.56503)");
+        geoPoint("J_{2}=$point(2.04897,2.49627)");
+        geoPoint("I_{2}=$point(2.12755,2.62397)");
+        geoPoint("N_{2}=$point(1.44976,2.76149)");
+    glEnd();
+    //hand
+    glBegin(GL_POLYGON);
+        glColor3f(0.8f, 0.5f, 0.2f);
+        geoPoint("J_{2}=$point(2.04897,2.49627)");
+        geoPoint("K_{2}=$point(2.11773,2.40131)");
+        geoPoint("L_{2}=$point(2.37313,2.38494)");
+        geoPoint("G_{2}=$point(2.44189,2.48972)");
+        geoPoint("H_{2}=$point(2.35676,2.61087)");
+        geoPoint("I_{2}=$point(2.12755,2.62397)");
+    glEnd();
+    //lungi
+    glBegin(GL_POLYGON);
+        glColor3f(0.1f, 0.5f, 0.2f);
+        geoPoint("N_{3}=$point(-0.27765,1.91279)");
+        geoPoint("P_{3}=$point(0.28659, 0.881)");
+        geoPoint("Q_{3}=$point(0.65173, 0.72385)");
+        geoPoint("R_{3}=$point(1.40851, 1.0309)");
+        geoPoint("U_{3}=$point(1.6279, 1.16514))");
+        geoPoint("T_{3}=$point(1.75614, 1.39775)");
+        geoPoint("S_{3}=$point(1.51159, 1.71387)");
+        geoPoint("O_{3}=$point(1.09559, 2.08182)");
+    glEnd();
+    //neck
+    glBegin(GL_QUADS);
+        glColor3f(0.8f, 0.5f, 0.2f);
+        geoPoint("B_{1}=$point(1.29955,3.60791)");
+        geoPoint("C_{1}=$point(1.37221,3.42019)");
+        geoPoint("H_{1}=$point(1.53571,3.57157)");
+        geoPoint("G_{1}=$point(1.46304,3.7714)");
+    glEnd();
+    //hair 1
+    glBegin(GL_POLYGON);
+        glColor3f(0.0f, 0.0f, 0.0f);
+        geoPoint("G_{1}=$point(1.46304,3.7714)");
+        geoPoint("M_{4}=$point(1.57664, 3.97755)");
+        geoPoint("C=$point(1.64507,3.98666)");
+        geoPoint("P_{4}=$point(1.6516, 4.1487)");
+        geoPoint("S_{4}=$point(1.63, 4.35)");
+        geoPoint("K_{1}=$point(1.47011, 4.33588)");
+        geoPoint("J_{1}=$point(1.34264, 4.17861)");
+        geoPoint("F_{2}=$point(1.36063, 3.90003)");
+    glEnd();
+    //hair 2
+    glBegin(GL_POLYGON);
+        glColor3f(0.0f, 0.0f, 0.0f);
+        geoPoint("P_{4}=$point(1.6516, 4.1487)");
+        geoPoint("Q_{4}=$point(1.71243,4.15011)");
+        geoPoint("N_{1}=$point(2.01181, 4.08359)");
+        geoPoint("M_{1}=$point(2.10891, 4.21252)");
+        geoPoint("L_{1}=$point(1.76478, 4.3574)");
+        geoPoint("S_{4}=$point(1.63, 4.35)");
+    glEnd();
+    //ear
+    glBegin(GL_POLYGON);
+        glColor3f(0.8f, 0.5f, 0.2f);
+        geoPoint("I_{4}=$point(1.51648,3.9265)");
+        geoPoint("C_{4}=$point(1.56186, 3.89084)");
+        geoPoint("J_{4}=$point(1.59373, 3.91402)");
+        geoPoint("M_{4}=$point(1.57664, 3.97755)");
+        geoPoint("L_{4}=$point(1.5724,4.01008)");
+        geoPoint("K_{4}=$point(1.567,4.06235)");
+        geoPoint("D_{4}=$point(1.5423,4.09379)");
+        geoPoint("E_{4}=$point(1.50301,4.08369)");
+        geoPoint("F_{4}=$point(1.47606,4.03878)");
+        geoPoint("G_{4}=$point(1.4783,3.98825)");
+        geoPoint("H_{4}=$point(1.52097,3.95569)");
+    glEnd();
+    //face-1
+    glBegin(GL_POLYGON);
+        glColor3f(0.8f, 0.5f, 0.2f);
+        geoPoint("G_{1}=$point(1.46304,3.7714)");
+        geoPoint("H_{1}=$point(1.53571,3.57157)");
+        geoPoint("I_{1}=$point(1.67498, 3.43835)");
+        geoPoint("P_{1}=$point(1.77761, 3.46175)");
+        geoPoint("Q_{1}=$point(1.82794, 3.51532)");
+        geoPoint("O_{1}=$point(1.96247, 3.68564)");
+        geoPoint("R_{1}=$point(1.93063, 3.82413)");
+    glEnd();
+    //face-2
+    glBegin(GL_POLYGON);
+        glColor3f(0.8f, 0.5f, 0.2f);
+        geoPoint("C=$point(1.64507,3.98666)");
+        geoPoint("R_{1}=$point(1.93063, 3.82413)");
+        geoPoint("S_{1}=$point(2.00704, 4.02469)");
+        geoPoint("N_{1}=$point(2.01181, 4.08359)");
+        geoPoint("Q_{4}=$point(1.71243,4.15011)");
+        geoPoint("P_{4}=$point(1.6516, 4.1487)");
+    glEnd();
+    //face-3
+    glBegin(GL_POLYGON);
+        glColor3f(0.8f, 0.5f, 0.2f);
+        geoPoint("G_{1}=$point(1.46304,3.7714)");
+        geoPoint("R_{1}=$point(1.93063, 3.82413)");
+        geoPoint("C=$point(1.64507,3.98666)");
+        geoPoint("M_{4}=$point(1.57664, 3.97755)");
+    glEnd();
 
 
 
@@ -752,20 +1218,25 @@ void timer(int value) {
     prev = now;
 
     if (!paused) {
+        // Move rickshaw
         rickshawX += speed * dt;
-        // Wrap-around
         if (rickshawX > worldHalfW + 160.0f) rickshawX = -worldHalfW - 160.0f;
         if (rickshawX < -worldHalfW - 160.0f) rickshawX = worldHalfW + 160.0f;
 
-        // Spin wheels according to linear speed (v = omega * r)
-        float wheelRadius = 28.0f; // match rear wheel
+        // Wheel rotation (degrees)
+        float wheelRadius = 28.0f; // rear wheel
         float omega = (speed / wheelRadius) * 180.0f / 3.1415926535f; // deg/s
         wheelAngle = std::fmod(wheelAngle - omega * dt, 360.0f);
+
+        // Update chain offset based on wheel rotation
+        chainOffset += (omega * dt) / 360.0f; // normalized fraction along chain
+        chainOffset = fmod(chainOffset, 1.0f);
     }
 
     glutPostRedisplay();
     glutTimerFunc(16, timer, 0); // ~60 FPS
 }
+
 
 void keyboard(unsigned char key, int, int) {
     switch (key) {
