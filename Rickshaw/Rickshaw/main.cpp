@@ -25,6 +25,7 @@ using namespace std;
 static float worldHalfW = 640.0f;   // width half
 static float worldHalfH = 360.0f;   // height half
 static float chainOffset = 0.0f; // normalized [0,1) along the chain path
+float rickshawScale = 50.0f;  // initial scale
 
 struct Vec2 { float x, y; };
 
@@ -1214,7 +1215,7 @@ void display() {
     glClear(GL_COLOR_BUFFER_BIT);
 
     drawGround();
-    drawRickshaw(rickshawX, rickshawY, 50.0f, wheelAngle);
+    drawRickshaw(rickshawX, rickshawY, rickshawScale, wheelAngle);
 
 
 
@@ -1320,7 +1321,19 @@ void keyboard(unsigned char key, int, int) {
     }
 }
 
-
+void mouse(int button, int state, int mx, int my) {
+    if (state == GLUT_DOWN) {  // only act on press
+        if (button == GLUT_LEFT_BUTTON) {
+            rickshawScale -= 5.0f;  // shrink
+            if (rickshawScale < 10.f) rickshawScale = 5.0f; // minimum size
+        }
+        else if (button == GLUT_RIGHT_BUTTON) {
+            rickshawScale += 5.0f;  // enlarge
+            if (rickshawScale > 50.0f) rickshawScale = 75.0f; // maximum size
+        }
+        glutPostRedisplay(); // redraw scene
+    }
+}
 void initGL() {
     glClearColor(0.96f, 0.98f, 1.0f, 1.0f); // light background
     glDisable(GL_DEPTH_TEST);
@@ -1340,6 +1353,8 @@ int main(int argc, char** argv) {
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
     glutKeyboardFunc(keyboard);
+    glutMouseFunc(mouse); // bind mouse
+
     glutTimerFunc(16, timer, 0);
 
     glutMainLoop();
