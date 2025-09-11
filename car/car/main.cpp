@@ -388,7 +388,243 @@ void display() {
         geoPoint("K_{3}=$point(-1.73871,2.16862)");
         geoPoint("P_{3}=$point(-2.02095,2.19193)");
     glEnd();
-
+    //top-1
+    glBegin(GL_POLYGON);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("E_{3}=$point(-2.21247,2.24073)");
+        geoPoint("D_{3}=$point(-2.16006,2.22424)");
+        geoPoint("C_{3}=$point(-2.0875,2.21497)");
+        geoPoint("B_{3}=$point(-2.04107,2.21341)");
+        geoPoint("M_{3}=$point(-2.10195,2.2719)");
+    glEnd();
+    //top-2
+    glBegin(GL_POLYGON);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("M_{3}=$point(-2.10195,2.2719)");
+        geoPoint("B_{3}=$point(-2.04107,2.21341)");
+        geoPoint("P_{3}=$point(-2.02095,2.19193)");
+        geoPoint("K_{3}=$point(-1.73871,2.16862)");
+        geoPoint("S_{3}=$point(-1.99698,2.2889)");
+    glEnd();
+    //top-3
+    glBegin(GL_TRIANGLES);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("S_{3}=$point(-1.99698,2.2889)");
+        geoPoint("K_{3}=$point(-1.73871,2.16862)");
+        geoPoint("T_{3}=$point(-1.87326,2.31053)");
+    glEnd();
+    //top-4
+    glBegin(GL_QUADS);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("T_{3}=$point(-1.87326,2.31053)");
+        geoPoint("K_{3}=$point(-1.73871,2.16862)");
+        geoPoint("O_{4}=$point(-1.6086,2.23023)");
+        geoPoint("U_{3}=$point(-1.66324,2.33074)");
+    glEnd();
+    //top-5
+    glBegin(GL_TRIANGLES);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("O_{4}=$point(-1.6086,2.23023)");
+        geoPoint("Q_{4}=$point(-1.54313,2.25485)");
+        geoPoint("U_{3}=$point(-1.66324,2.33074)");
+    glEnd();
+    //top-6
+    glBegin(GL_QUADS);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("U_{3}=$point(-1.66324,2.33074)");
+        geoPoint("Q_{4}=$point(-1.54313,2.25485)");
+        geoPoint("P_{4}=$point(-1.48346,2.26623)");
+        geoPoint("V_{3}=$point(-1.45647,2.34509)");
+    glEnd();
+    //top-7
+    glBegin(GL_QUADS);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("V_{3}=$point(-1.45647,2.34509)");
+        geoPoint("P_{4}=$point(-1.48346,2.26623)");
+        geoPoint("R_{4}=$point(-1.32917,2.27823)");
+        geoPoint("W_{3}=$point(-1.19555,2.36406)");
+    glEnd();
+    //top-8
+    glBegin(GL_TRIANGLES);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("W_{3}=$point(-1.19555,2.36406)");
+        geoPoint("R_{4}=$point(-1.32917,2.27823)");
+        geoPoint("S_{4}=$point(-1.00344,2.2857)");
+    glEnd();
+    //top-9
+    glBegin(GL_TRIANGLES);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("W_{3}=$point(-1.19555,2.36406)");
+        geoPoint("S_{4}=$point(-1.00344,2.2857)");
+        geoPoint("Z_{3}=$point(-0.80168,2.37766)");
+    glEnd();
+    //top-10
+    glBegin(GL_TRIANGLES);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("S_{4}=$point(-1.00344,2.2857)");
+        geoPoint("T_{4}=$point(-0.62248,2.29231)");
+        geoPoint("Z_{3}=$point(-0.80168,2.37766)");
+    glEnd();
+    //top-11
+    glBegin(GL_TRIANGLES);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("T_{4}=$point(-0.62248,2.29231)");
+        geoPoint("A_{4}=$point(-0.60227,2.3797)");
+        geoPoint("Z_{3}=$point(-0.80168,2.37766)");
+    glEnd();
+    //top-12
+    glBegin(GL_TRIANGLES);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("T_{4}=$point(-0.62248,2.29231)");
+        geoPoint("B_{4}=$point(-0.39878,2.37224)");
+        geoPoint("A_{4}=$point(-0.60227,2.3797)");
+    glEnd();
+    //top-13
+    glBegin(GL_TRIANGLES);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("T_{4}=$point(-0.62248,2.29231)");
+        geoPoint("U_{4}=$point(-0.2965,2.2857)");
+        geoPoint("B_{4}=$point(-0.39878,2.37224)");
+    glEnd();
+    //top-14
+    glBegin(GL_TRIANGLES);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("U_{4}=$point(-0.2965,2.2857)");
+        geoPoint("C_{4}=$point(-0.20114,2.36353)");
+        geoPoint("B_{4}=$point(-0.39878,2.37224)");
+    glEnd();
+    //top-15
+    glBegin(GL_QUADS);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("U_{4}=$point(-0.2965,2.2857)");
+        geoPoint("V_{4}=$point(-0.02451,2.27671)");
+        geoPoint("D_{4}=$point(-0.01103,2.34976)");
+        geoPoint("C_{4}=$point(-0.20114,2.36353)");
+    glEnd();
+    //top-16
+    glBegin(GL_QUADS);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("V_{4}=$point(-0.02451,2.27671)");
+        geoPoint("W_{4}=$point(0.18842,2.26386)");
+        geoPoint("E_{4}=$point(0.18521,2.33105)");
+        geoPoint("D_{4}=$point(-0.01103,2.34976)");
+    glEnd();
+    //top-17
+    glBegin(GL_QUADS);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("W_{4}=$point(0.18842,2.26386)");
+        geoPoint("Z_{4}=$point(0.32217,2.24258)");
+        geoPoint("F_{4}=$point(0.36903,2.31243)");
+        geoPoint("E_{4}=$point(0.18521,2.33105)");
+    glEnd();
+    //top-18
+    glBegin(GL_QUADS);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("Z_{4}=$point(0.32217,2.24258)");
+        geoPoint("A_{5}=$point(0.44833,2.20762)");
+        geoPoint("G_{4}=$point(0.50101,2.28644)");
+        geoPoint("F_{4}=$point(0.36903,2.31243)");
+    glEnd();
+    //top-19
+    glBegin(GL_QUADS);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("A_{5}=$point(0.44833,2.20762)");
+        geoPoint("B_{5}=$point(0.5737,2.1663)");
+        geoPoint("J_{4}=$point(0.59434,2.2264)");
+        geoPoint("G_{4}=$point(0.50101,2.28644)");
+    glEnd();
+    //top-20
+    glBegin(GL_TRIANGLES);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("G_{4}=$point(0.50101,2.28644)");
+        geoPoint("J_{4}=$point(0.59434,2.2264)");
+        geoPoint("I_{4}=$point(0.60449,2.2434)");
+    glEnd();
+    //top-21
+    glBegin(GL_TRIANGLES);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("G_{4}=$point(0.50101,2.28644)");
+        geoPoint("I_{4}=$point(0.60449,2.2434)");
+        geoPoint("H_{4}=$point(0.63659,2.257)");
+    glEnd();
+    //front-1
+    glBegin(GL_TRIANGLES);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("J_{4}=$point(0.59434,2.2264)");
+        geoPoint("B_{5}=$point(0.5737,2.1663)");
+        geoPoint("K_{4}=$point(0.61674,2.20341)");
+    glEnd();
+    //front-2
+    glBegin(GL_TRIANGLES);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("B_{5}=$point(0.5737,2.1663)");
+        geoPoint("L_{4}=$point(0.66095,2.1816)");
+        geoPoint("K_{4}=$point(0.61674,2.20341)");
+    glEnd();
+    //front-3
+    glBegin(GL_QUADS);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("B_{5}=$point(0.5737,2.1663)");
+        geoPoint("C_{5}=$point(0.68654,2.11592)");
+        geoPoint("M_{4}=$point(0.71333,2.15332)");
+        geoPoint("L_{4}=$point(0.66095,2.1816)");
+    glEnd();
+    //front-4
+    glBegin(GL_TRIANGLES);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("C_{5}=$point(0.68654,2.11592)");
+        geoPoint("D_{5}=$point(0.8014,2.05547)");
+        geoPoint("M_{4}=$point(0.71333,2.15332)");
+    glEnd();
+    //front-5
+    glBegin(GL_TRIANGLES);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("D_{5}=$point(0.8014,2.05547)");
+        geoPoint("P_{5}=$point(1.12251,1.92411)");
+        geoPoint("M_{4}=$point(0.71333,2.15332)");
+    glEnd();
+    //front-6
+    glBegin(GL_TRIANGLES);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("D_{5}=$point(0.8014,2.05547)");
+        geoPoint("E_{5}=$point(1.19031,1.82575)");
+        geoPoint("P_{5}=$point(1.12251,1.92411)");
+    glEnd();
+    //front-7
+    glBegin(GL_TRIANGLES);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("E_{5}=$point(1.19031,1.82575)");
+        geoPoint("Q_{5}=$point(1.43564,1.73464)");
+        geoPoint("P_{5}=$point(1.12251,1.92411)");
+    glEnd();
+    //front-8
+    glBegin(GL_TRIANGLES);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("E_{5}=$point(1.19031,1.82575)");
+        geoPoint("F_{5}=$point(1.44018,1.66052)");
+        geoPoint("Q_{5}=$point(1.43564,1.73464)");
+    glEnd();
+    //front-9
+    glBegin(GL_TRIANGLES);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("F_{5}=$point(1.44018,1.66052)");
+        geoPoint("N_{4}=$point(1.84377,1.47202)");
+        geoPoint("Q_{5}=$point(1.43564,1.73464)");
+    glEnd();
+    //front-10
+    glBegin(GL_TRIANGLES);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("F_{5}=$point(1.44018,1.66052)");
+        geoPoint("G_{5}=$point(1.7,1.45)");
+        geoPoint("N_{4}=$point(1.84377,1.47202)");
+    glEnd();
+    //front-11
+    glBegin(GL_TRIANGLES);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("G_{5}=$point(1.7,1.45)");
+        geoPoint("S_{5}=$point(1.85892,1.45157)");
+        geoPoint("N_{4}=$point(1.84377,1.47202)");
+    glEnd();
 
 
 
