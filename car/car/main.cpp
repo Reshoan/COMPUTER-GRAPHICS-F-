@@ -962,13 +962,360 @@ void display() {
         geoPoint("D_{1}=$point(4.4,0)");
         geoPoint("E_{6}=$point(3.99701,0.08181)");
     glEnd();
+    //front hood-6
+    glBegin(GL_TRIANGLE_FAN);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("E_{6}=$point(3.99701,0.08181)");
+        geoPoint("D_{1}=$point(4.4,0)");
+        geoPoint("E_{1}=$point(4.67869,0.02249)");
+        geoPoint("F_{1}=$point(4.75336,0.1005)");
+        geoPoint("G_{1}=$point(4.70882,0.21716)");
+        geoPoint("H_{1}=$point(4.75761,0.3826)");
+        geoPoint("I_{1}=$point(4.8276,0.44624)");
+        geoPoint("J_{1}=$point(4.81275,0.70713)");
+        geoPoint("K_{1}=$point(4.72342,0.74581)");
+        geoPoint("A_{7}=$point(4.48097,0.75714)");
+        geoPoint("Z_{6}=$point(4.25086,0.76157)");
+        geoPoint("V_{6}=$point(4.09346,0.92912)");
+    glEnd();
+    //front hood-7
+    glBegin(GL_QUADS);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("H_{6}=$point(2.92422,1.42564)");
+        geoPoint("U_{6}=$point(4.0911,0.95748)");
+        geoPoint("T_{6}=$point(4.097,0.98112)");
+        geoPoint("I_{6}=$point(3.45365,1.35351)");
+    glEnd();
+    //front hood-8
+    glBegin(GL_QUADS);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("T_{6}=$point(4.097,0.98112)");
+        geoPoint("S_{6}=$point(4.12655,0.98821)");
+        geoPoint("J_{6}=$point(3.74864,1.30069)");
+        geoPoint("I_{6}=$point(3.45365,1.35351)");
+    glEnd();
+    //front hood-9
+    glBegin(GL_QUADS);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("S_{6}=$point(4.12655,0.98821)");
+        geoPoint("R_{6}=$point(4.2,1)");
+        geoPoint("K_{6}=$point(4.04749,1.23629)");
+        geoPoint("J_{6}=$point(3.74864,1.30069)");
+    glEnd();
+    //front hood-10
+    glBegin(GL_QUADS);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("S_{6}=$point(4.12655,0.98821)");
+        geoPoint("R_{6}=$point(4.2,1)");
+        geoPoint("K_{6}=$point(4.04749,1.23629)");
+        geoPoint("J_{6}=$point(3.74864,1.30069)");
+    glEnd();
+    //front hood-11
+    glBegin(GL_QUADS);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("R_{6}=$point(4.2,1)");
+        geoPoint("Q_{6}=$point(4.31207,1.00714)");
+        geoPoint("L_{6}=$point(4.26003,1.17574)");
+        geoPoint("K_{6}=$point(4.04749,1.23629)");
+    glEnd();
+    //front hood-12
+    glBegin(GL_TRIANGLE_FAN);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("Q_{6}=$point(4.31207,1.00714)");
+        geoPoint("P_{6}=$point(4.63672,1.00284)");
+        geoPoint("O_{6}=$point(4.56532,1.05079)");
+        geoPoint("N_{6}=$point(4.48545,1.08815)");
+        geoPoint("M_{6}=$point(4.38756,1.13581)");
+        geoPoint("L_{6}=$point(4.26003,1.17574)");
+    glEnd();
+    //front light-1
+    glBegin(GL_TRIANGLE_FAN);
+        glColor3f(0.75f, 0.75f, 0.75f); // Light gray
+        geoPoint("A_{7}=$point(4.48097,0.75714)");
+        geoPoint("K_{1}=$point(4.72342,0.74581)");
+        geoPoint("B_{7}=$point(4.71883,0.8158)");
+        geoPoint("C_{7}=$point(4.7,0.9)");
+        geoPoint("D_{7}=$point(4.67007,0.96794)");
+        geoPoint("P_{6}=$point(4.63672,1.00284)");
+        geoPoint("Q_{6}=$point(4.31207,1.00714)");
+    glEnd();
+    //front light-2
+    glBegin(GL_QUADS);
+        glColor3f(0.75f, 0.75f, 0.75f); // Light gray
+        geoPoint("A_{7}=$point(4.48097,0.75714)");
+        geoPoint("Q_{6}=$point(4.31207,1.00714)");
+        geoPoint("R_{6}=$point(4.2,1)");
+        geoPoint("Z_{6}=$point(4.25086,0.76157)");
+    glEnd();
+    //front light-3
+    glBegin(GL_TRIANGLES);
+        glColor3f(0.75f, 0.75f, 0.75f); // Light gray
+        geoPoint("Z_{6}=$point(4.25086,0.76157)");
+        geoPoint("U_{6}=$point(4.0911,0.95748)");
+        geoPoint("V_{6}=$point(4.09346,0.92912)");
+    glEnd();
+    //front light-4
+    glBegin(GL_TRIANGLES);
+        glColor3f(0.75f, 0.75f, 0.75f); // Light gray
+        geoPoint("Z_{6}=$point(4.25086,0.76157)");
+        geoPoint("T_{6}=$point(4.097,0.98112)");
+        geoPoint("U_{6}=$point(4.0911,0.95748)");
+    glEnd();
+    //front light-5
+    glBegin(GL_TRIANGLES);
+        glColor3f(0.75f, 0.75f, 0.75f); // Light gray
+        geoPoint("Z_{6}=$point(4.25086,0.76157)");
+        geoPoint("S_{6}=$point(4.12655,0.98821)");
+        geoPoint("T_{6}=$point(4.097,0.98112)");
+    glEnd();
+    //front light-6
+    glBegin(GL_TRIANGLES);
+        glColor3f(0.75f, 0.75f, 0.75f); // Light gray
+        geoPoint("Z_{6}=$point(4.25086,0.76157)");
+        geoPoint("R_{6}=$point(4.2,1)");
+        geoPoint("S_{6}=$point(4.12655,0.98821)");
+    glEnd();
 
+    //cosmetics
+    //back-1
+    glBegin(GL_LINE_STRIP);
+        glColor3f(0.0f, 0.0f, 0.0f);
+        geoPoint("P=$point(-4.52185,0.05462)");
+        geoPoint("Q=$point(-4.53389,0.09402)");
+        geoPoint("R=$point(-4.54265,0.12357)");
+        geoPoint("S=$point(-4.54593,0.18049)");
+        geoPoint("T=$point(-4.54374,0.21661)");
+        geoPoint("U=$point(-4.53279,0.30089)");
+        geoPoint("V=$point(-4.54375,0.39425)");
+        geoPoint("W=$point(-4.54572,0.70724)");
+        geoPoint("Z=$point(-4.54375,1.00252)");
+    glEnd();
 
-
-
-
-
-
+    //back-2
+    glBegin(GL_LINE_STRIP);
+        glColor3f(0.0f, 0.0f, 0.0f);
+        geoPoint("C=$point(-5.00848,1.28657)");
+        geoPoint("D=$point(-4.97575,1.34604)");
+        geoPoint("E=$point(-4.93571,1.41175)");
+        geoPoint("F=$point(-4.89566,1.47746)");
+        geoPoint("G=$point(-4.86486,1.51237)");
+        geoPoint("H=$point(-4.77142,1.50929)");
+        geoPoint("F_{5}=$point(-4.45153,1.51995)");
+        geoPoint("G_{5}=$point(-4.42685,1.52574)");
+        geoPoint("I=$point(-4.41115,1.54229) ");
+        geoPoint("J=$point(-3.87931,1.56199)");
+        geoPoint("K=$point(-3.65169,1.57731)");
+        geoPoint("L=$point(-3.50724,1.59263)");
+        geoPoint("M=$point(-3.39044,1.61255)");
+        geoPoint("N=$point(-3.35271,1.62727)");
+        geoPoint("O=$point(-3.32153,1.659)");
+    glEnd();
+    //oil
+    glBegin(GL_LINE_LOOP);
+        glColor3f(0.0f, 0.0f, 0.0f);
+        geoPoint("N_{1}=$point(-3.57643,1.42531)");
+        geoPoint("M_{1}=$point(-3.57694,1.23332)");
+        geoPoint("L_{1}=$point(-3.56838,1.20636)");
+        geoPoint("K_{1}=$point(-3.54998,1.19138)");
+        geoPoint("J_{1}=$point(-3.5243,1.1847)");
+        geoPoint("I_{1}=$point(-3.24124,1.18613)");
+        geoPoint("H_{1}=$point(-3.2147,1.18869)");
+        geoPoint("G_{1}=$point(-3.19583,1.20052)");
+        geoPoint("F_{1}=$point(-3.18929,1.22313) ");
+        geoPoint("E_{1}=$point(-3.19,1.44)");
+        geoPoint("D_{1}=$point(-3.19308,1.45037)");
+        geoPoint("C_{1}=$point(-3.21445,1.47051)");
+        geoPoint("B_{1}=$point(-3.23468,1.478) ");
+        geoPoint("A_{1}=$point(-3.52713,1.47709)");
+        geoPoint("P_{1}=$point(-3.5517,1.47243)");
+        geoPoint("O_{1}=$point(-3.56997,1.45249)");
+        geoPoint("N_{1}=$point(-3.57643,1.42531)");
+    glEnd();
+    //backdoor
+    glBegin(GL_LINE_STRIP);
+        glColor3f(0.0f, 0.0f, 0.0f);
+        geoPoint("H_{4}=$point(-2.34782,1.57894)");
+        geoPoint("I_{4}=$point(-2.46498,1.50665)");
+        geoPoint("J_{4}=$point(-2.53383,1.4523)");
+        geoPoint("K_{4}=$point(-2.56645,1.407)");
+        geoPoint("L_{4}=$point(-2.59363,1.33271)");
+        geoPoint("M_{4}=$point(-2.61537,1.27291)");
+        geoPoint("N_{4}=$point(-2.63893,1.18413)");
+        geoPoint("O_{4}=$point(-2.64255,1.05186)");
+        geoPoint("P_{4}=$point(-2.61537,1.00475)");
+        geoPoint("Q_{4}=$point(-2.58819,0.97576)");
+        geoPoint("R_{4}=$point(-2.53927,0.94677)");
+        geoPoint("S_{4}=$point(-2.46136,0.90872)");
+        geoPoint("T_{4}=$point(-2.37438,0.87067)");
+        geoPoint("U_{4}=$point(-2.26929,0.80725)");
+        geoPoint("V_{4}=$point(-2.16782,0.73115)");
+        geoPoint("W_{4}=$point(-2.09535,0.6623)");
+        geoPoint("Z_{4}=$point(-2.03374,0.58801)");
+        geoPoint("A_{5}=$point(-1.96851,0.47748)");
+        geoPoint("B_{5}=$point(-1.92684,0.39051)");
+        geoPoint("C_{5}=$point(-1.89604,0.27092)");
+        geoPoint("D_{5}=$point(-1.87973,0.19663)");
+        geoPoint("E_{5}=$point(-1.88159,0.06548)");
+    glEnd();
+    //door handle back-1
+    glBegin(GL_LINE_LOOP);
+        glColor3f(0.0f, 0.0f, 0.0f);
+        geoPoint("G_{6}=$point(-2.45,1.3)");
+        geoPoint("H_{6}=$point(-2.47522,1.27937)");
+        geoPoint("I_{6}=$point(-2.49501,1.25738)");
+        geoPoint("J_{6}=$point(-2.49428,1.17602)");
+        geoPoint("U_{5}=$point(-2.47023,1.15369)");
+        geoPoint("V_{5}=$point(-2.4459,1.14157)");
+        geoPoint("W_{5}=$point(-2.42117,1.1311)");
+        geoPoint("Z_{5}=$point(-2.11425,1.1311)");
+        geoPoint("A_{6}=$point(-2.07795,1.15109)");
+        geoPoint("B_{6}=$point(-2.07062,1.17308)");
+        geoPoint("C_{6}=$point(-2.07355,1.25005)");
+        geoPoint("D_{6}=$point(-2.10434,1.28156)");
+        geoPoint("E_{6}=$point(-2.12926,1.29256)");
+        geoPoint("F_{6}=$point(-2.15,1.3)");
+        geoPoint("G_{6}=$point(-2.45,1.3)");
+    glEnd();
+    //door handle back-2
+    glBegin(GL_LINE_LOOP);
+        glColor3f(0.0f, 0.0f, 0.0f);
+        geoPoint("P_{6}=$point(-2.37334,1.2757)");
+        geoPoint("Q_{6}=$point(-2.39679,1.25957)");
+        geoPoint("K_{6}=$point(-2.39669,1.22011)");
+        geoPoint("L_{6}=$point(-2.12119,1.21853)");
+        geoPoint("M_{6}=$point(-2.11826,1.24931)");
+        geoPoint("N_{6}=$point(-2.14612,1.26837)");
+        geoPoint("O_{6}=$point(-2.16224,1.27423)");
+    glEnd();
+    //door divide
+    glBegin(GL_LINE_STRIP);
+        glColor3f(0.0f, 0.0f, 0.0f);
+        geoPoint("W_{2}=$point(-0.45126,0.03519)");
+        geoPoint("Z_{2}=$point(-0.42218,0.2092)");
+        geoPoint("A_{3}=$point(-0.38906,0.37089)");
+        geoPoint("B_{3}=$point(-0.37542,0.53648)");
+        geoPoint("C_{3}=$point(-0.37153,0.86181)");
+        geoPoint("D_{3}=$point(-0.4027,1.23195)");
+        geoPoint("E_{3}=$point(-0.45679,1.54279)");
+    glEnd();
+    //door handle front-1
+    glBegin(GL_LINE_LOOP);
+        glColor3f(0.0f, 0.0f, 0.0f);
+        geoPoint("V_{6}=$point(-0.22398,1.08977)");
+        geoPoint("W_{6}=$point(0.0982,1.088)");
+        geoPoint("Z_{6}=$point(0.12661,1.10486)");
+        geoPoint("A_{7}=$point(0.13829,1.11822)");
+        geoPoint("B_{7}=$point(0.1388,1.19001)");
+        geoPoint("C_{7}=$point(0.12353,1.21343)");
+        geoPoint("D_{7}=$point(0.09603,1.2394)");
+        geoPoint("E_{7}=$point(0.08004,1.25125) ");
+        geoPoint("F_{7}=$point(-0.21789,1.25312)");
+        geoPoint("G_{7}=$point(-0.26,1.23758)");
+        geoPoint("H_{7}=$point(-0.27296,1.22462)");
+        geoPoint("R_{6}=$point(-0.28079,1.20427)");
+        geoPoint("S_{6}=$point(-0.28167,1.14036)");
+        geoPoint("T_{6}=$point(-0.26925,1.11373)");
+        geoPoint("U_{6}=$point(-0.2444,1.09243)");
+        geoPoint("V_{6}=$point(-0.22398,1.08977)");
+    glEnd();
+    //door handle front-2
+    glBegin(GL_LINE_LOOP);
+        glColor3f(0.0f, 0.0f, 0.0f);
+        geoPoint("I_{7}=$point(-0.18671,1.17397)");
+        geoPoint("J_{7}=$point(0.09732,1.17297)");
+        geoPoint("K_{7}=$point(0.0933,1.19881)");
+        geoPoint("L_{7}=$point(0.08177,1.21577)");
+        geoPoint("M_{7}=$point(0.07159,1.21984)");
+        geoPoint("N_{7}=$point(0.06034,1.23079)");
+        geoPoint("O_{7}=$point(-0.17193,1.23138)");
+        geoPoint("P_{7}=$point(-0.18687,1.20763)");
+        geoPoint("I_{7}=$point(-0.18671,1.17397)");
+    glEnd();
+    //front door divide
+    glBegin(GL_LINE_STRIP);
+        glColor3f(0.0f, 0.0f, 0.0f);
+        geoPoint("Q_{7}=$point(1.611,1.44835)");
+        geoPoint("V_{2}=$point(1.71056,1.44766)");
+        geoPoint("U_{2}=$point(1.83169,1.36471)");
+        geoPoint("T_{2}=$point(1.9,1.3)");
+        geoPoint("S_{2}=$point(1.91882,1.25581)");
+        geoPoint("R_{2}=$point(1.94931,1.15562)");
+        geoPoint("Q_{2}=$point(1.9798,0.99008)");
+        geoPoint("P_{2}=$point(2,0.8)");
+        geoPoint("O_{2}=$point(1.99128,0.59929)");
+        geoPoint("N_{2}=$point(1.98421,0.50281)");
+        geoPoint("M_{2}=$point(1.95697,0.37027)");
+        geoPoint("L_{2}=$point(1.91354,0.23021)");
+        geoPoint("K_{2}=$point(1.8667,0.10544)");
+    glEnd();
+    //hood divide
+    glBegin(GL_LINE_STRIP);
+        glColor3f(0.0f, 0.0f, 0.0f);
+        geoPoint("U_{3}=$point(1.98312,1.49486)");
+        geoPoint("V_{3}=$point(2.04461,1.46063)");
+        geoPoint("W_{3}=$point(2.09862,1.44215)");
+        geoPoint("Z_{3}=$point(2.18532,1.42936)");
+        geoPoint("A_{4}=$point(2.58327,1.40662)");
+        geoPoint("B_{4}=$point(3.37207,1.31993)");
+        geoPoint("C_{4}=$point(4.0557,1.19485)");
+        geoPoint("D_{4}=$point(4.4,1.1)");
+        geoPoint("E_{4}=$point(4.50482,1.04704)");
+        geoPoint("F_{4}=$point(4.52183,1.02505)");
+        geoPoint("G_{4}=$point(4.53223,1.00426)");
+    glEnd();
+    //front light divide
+    glBegin(GL_LINES);
+        glColor3f(0.0f, 0.0f, 0.0f);
+        geoPoint("Q_{1}=$point(4.3101,1.00586)");
+        geoPoint("R_{1}=$point(4.48091,0.76225)");
+    glEnd();
+    //front signal light
+    glBegin(GL_QUADS);
+        glColor3f(1.0f, 0.5f, 0.0f);
+        geoPoint("U_{1}=$point(4.1365,0.94239)");
+        geoPoint("V_{1}=$point(4.25877,0.80518)");
+        geoPoint("S_{1}=$point(4.37731,0.80612)");
+        geoPoint("T_{1}=$point(4.2653,0.94239)");
+    glEnd();
+    //line from light to front tire
+    glBegin(GL_LINES);
+        glColor3f(0.0f, 0.0f, 0.0f);
+        geoPoint("Z_{1}=$point(4.2541,0.76505)");
+        geoPoint("W_{1}=$point(3.72301,0.77252)");
+    glEnd();
+    //flood light
+    glBegin(GL_POLYGON);
+        glColor3f(0.75f, 0.75f, 0.75f); // Light gray
+        geoPoint("H_{2}=$point(4.43524,0.3755)");
+        geoPoint("G_{2}=$point(4.41978,0.3636)");
+        geoPoint("F_{2}=$point(4.40312,0.33446)");
+        geoPoint("E_{2}=$point(4.39777,0.28926)");
+        geoPoint("D_{2}=$point(4.40191,0.22274)");
+        geoPoint("C_{2}=$point(4.42582,0.20665)");
+        geoPoint("B_{2}=$point(4.58098,0.20616)");
+        geoPoint("A_{2}=$point(4.70744,0.21264)");
+        geoPoint("J_{2}=$point(4.75282,0.36301)");
+        geoPoint("I_{2}=$point(4.74806,0.37728)");
+    glEnd();
+    //side mirror
+    glBegin(GL_TRIANGLE_FAN);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        geoPoint("G_{3}=$point(1.27436,1.46409)");
+        geoPoint("F_{3}=$point(1.58503,1.47144)");
+        geoPoint("T_{3}=$point(1.41246,1.60164)");
+        geoPoint("S_{3}=$point(1.3926,1.64534)");
+        geoPoint("R_{3}=$point(1.38307,1.68109)");
+        geoPoint("Q_{3}=$point(1.36082,1.71049)");
+        geoPoint("P_{3}=$point(1.3211,1.72876)");
+        geoPoint("O_{3}=$point(1.23472,1.74933)");
+        geoPoint("N_{3}=$point(1.07967,1.74802)");
+        geoPoint("M_{3}=$point(1.06388,1.73263)");
+        geoPoint("L_{3}=$point(1.05491,1.70735)");
+        geoPoint("K_{3}=$point(1.05899,1.5777)");
+        geoPoint("J_{3}=$point(1.07693,1.53693)");
+        geoPoint("I_{3}=$point(1.10099,1.51285)");
+        geoPoint("H_{3}=$point(1.17503,1.48215)");
+    glEnd();
 
 
     glutSwapBuffers();
@@ -979,7 +1326,7 @@ void init() {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluOrtho2D(-15.0, 15.0, -15.0, 15.0); // 2D Orthographic projection
-    glLineWidth(2.0f); // set global line thickness
+    glLineWidth(1.0f); // set global line thickness
     glScalef(2.0f, 2.0f, 1.0f); // scale everything 2x in X and Y
 
     glMatrixMode(GL_MODELVIEW);
