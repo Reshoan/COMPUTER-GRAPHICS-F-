@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1757700984 source:c:\users\resho\desktop\computer-graphics-f-\rickshaw\rickshaw\main.cpp
+1757689465 source:c:\users\resho\desktop\computer-graphics-f-\rickshaw+car\rickshaw+car\main.cpp
 	<windows.h>
 	<GL/glut.h>
 	<cmath>
@@ -221,20 +221,4 @@
 1301111164 c:\program files (x86)\codeblocks\mingw\include\gl\glu.h
 	<stddef.h>
 	<GL/gl.h>
-
-1757222596 source:c:\users\techno\desktop\cg\rickshaw\rickshaw\main.cpp
-	<windows.h>
-	<GL/glut.h>
-	<cmath>
-	<cstdio>
-	<iostream>
-	<sstream>
-
-1757408617 source:c:\users\techno\onedrive\desktop\cg\rickshaw\rickshaw\main.cpp
-	<windows.h>
-	<GL/glut.h>
-	<cmath>
-	<cstdio>
-	<iostream>
-	<sstream>
 
