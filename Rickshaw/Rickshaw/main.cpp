@@ -422,8 +422,8 @@ void drawCarWheel(float x, float y, float r, float angleDeg) {
 
     // ----- Spokes (4 or 5 thick bars) -----
     glColor3f(0.8f, 0.8f, 0.8f);
-    glLineWidth(4.0f);
-    int spokes = 40;
+    glLineWidth(8.0f);
+    int spokes = 6;
     float step = 360.0f / spokes;
     glBegin(GL_LINES);
     for (int i = 0; i < spokes; ++i) {
